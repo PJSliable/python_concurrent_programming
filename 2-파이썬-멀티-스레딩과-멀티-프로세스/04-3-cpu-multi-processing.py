@@ -1,0 +1,33 @@
+import time
+import os
+import threading
+from concurrent.futures import ProcessPoolExecutor
+
+nums = [50, 63, 32]
+
+
+def cpu_bound_func(num):
+    print(f"{os.getpid()} process | {threading.get_ident()} thread")
+    numbers = range(1, num)
+
+    total = 1
+
+    for i in numbers:
+        for j in numbers:
+            for k in numbers:
+                total *= i * j * k
+    return total
+
+
+def main():
+    executor = ProcessPoolExecutor(max_workers=10)
+    results = list(executor.map(cpu_bound_func, nums))
+
+
+if __name__ == "__main__":
+    start = time.time()
+    main()
+    end = time.time()
+    print(
+        end - start
+    )  # 19.35 줄어들었음. nums의 개수가 많아질수록 갭 차이는 증가함. cpu 집약적인 연산을 할 때에는 multi-processing 으로 하는 것이 좋음.
